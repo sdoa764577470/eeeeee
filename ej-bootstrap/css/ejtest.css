@@ -1,0 +1,18 @@
+.main_page{
+	position: absolute;
+	top:0;
+	bottom: 0;
+	width: 100%;
+}
+.left-nav>.h2{
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+li{
+	cursor: pointer;
+}
+.loaduse{
+	width: 100%;
+	background-color: white;
+	margin-top: 15px;
+}

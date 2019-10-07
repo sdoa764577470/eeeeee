@@ -1,0 +1,216 @@
+<style>
+	.category_but{
+		padding:20px;
+	}
+</style>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-2">
+			<!-- 按钮组 -->
+			<div class="category_but">
+				<button type="button" class="btn btn-primary mr-3" id="cat_add">添加</button>
+				<button type="button" class="btn btn-danger" id="cat_bat_del">批量删除</button>
+			</div>
+			<!-- / 按钮组 -->
+		</div>
+	</div>
+</div>
+<!-- 模态框开始 -->
+<div class="modal" tabindex="-1" role="dialog" id="eee">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">添加分类信息</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+		    <input type="hidden" class="form-control" id="cat_modal_id" name="id" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cat_modal_name">名称</label>
+		    <input type="text" class="form-control" id="cat_modal_name" name="name" placeholder="请输入名称" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cat_modal_num">数量</label>
+		    <input type="text" class="form-control" id="cat_modal_num" name="num" placeholder="请输入数量">
+		  </div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="cat_submit">提交</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 模态框结束 -->
+<!-- 模态框2开始 -->
+<div class="modal" tabindex="-1" role="dialog" id="rrr">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">修改分类信息</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+		    <input type="hidden" class="form-control" id="cat_modal_id2" name="id" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cat_modal_name2">名称</label>
+		    <input type="text" class="form-control" id="cat_modal_name2" name="name" placeholder="请输入名称" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cat_modal_num2">数量</label>
+		    <input type="text" class="form-control" id="cat_modal_num2" name="num" placeholder="请输入数量">
+		  </div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="cat_upt">更新</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 模态框2结束 -->
+<!-- 表格开始 -->
+<table class="table category_table table-striped table-bordered text-center">
+  <thead>
+      <th scope="col">编号</th>
+      <th scope="col">名称</th>
+      <th scope="col">数量</th>
+      <th scope="col">操作</th>
+    </tr>
+  </thead>
+  <tbody class="category_body">
+   
+  </tbody>
+</table>
+<!-- 表格结束 -->
+<script>
+	var baseURL = "http://134.175.100.63:6677";
+	//添加功能
+	$("#cat_add").on("click",function(){
+		$("#eee").modal("show");
+		$("#cat_modal_name").val("")
+		$("#cat_modal_num").val("") 
+		$("#cat_modal_id").val("")
+	})
+	$("#cat_submit").on("click",function(){
+		var url = baseURL+"/category/saveOrUpdate"
+		var data =""
+		if($("#cat_modal_id").val()){
+			data = {
+				id:$("#cat_modal_id").val(),
+				name:$("#cat_modal_name").val(),
+				num:$("#cat_modal_num").val()
+			}
+		}else{
+			data = {
+				name:$("#cat_modal_name").val(),
+				num:$("#cat_modal_num").val()
+			}
+		}
+		$.post(url,data,function(response){
+			if(response.status===200){
+				$("#eee").modal("hide");
+				reloadData()
+			}else{
+				alert(response.message)
+			}
+		})
+	})
+	//删除功能
+	$("tbody").on("click",".btn_del",function(){
+		var url = baseURL+"/category/deleteById";
+		data = {
+			id:$(this).parents("tr").children().eq(0).children().eq(0).val()
+		}
+		$.get(url,data,function(response){
+			if(response.status==200){
+				alert("删除成功")
+				reloadData();
+			}else(
+				alert("删除失败")
+			)
+		})
+	})
+	//批量删除
+	$("#cat_bat_del").on("click",function(){
+		var url = baseURL+"/category/batchDelete";
+		var ids = $("input:checked").map(function(index,item){
+			return $(item).val()
+		}).toArray()
+		console.log(ids)
+		var data = "";
+		for(var key in ids){
+			var id = ids[key]
+			if(key == 0 ){
+				data += "ids="+id;
+			}else{
+				data += "&ids="+id;
+			}
+		}
+		console.log(data)
+		$.post(url,data,function(response){
+			if(response.status == 200 ){
+				alert('删除成功')
+				reloadData()
+			}else{
+				alert(response.message)
+			}
+		})
+	})
+	//修改功能
+	$("tbody").on("click",".btn_upt",function(){
+		$("#rrr").modal("show");
+		$("#cat_modal_name2").val($(this).parents("tr").children().eq(1).text())
+		$("#cat_modal_num2").val($(this).parents("tr").children().eq(2).text()) 
+		$("#cat_modal_id2").val($(this).parents("tr").children().eq(0).children().eq(0).val())
+	})
+	$("#cat_upt").on("click",function(){
+		var url = baseURL+"/category/saveOrUpdate"
+		var data = {
+				id:$("#cat_modal_id2").val(),
+				name:$("#cat_modal_name2").val(),
+				num:$("#cat_modal_num2").val()
+			}
+		console.log(data)
+		$.post(url,data,function(response){
+			if(response.status===200){
+				$("#rrr").modal("hide");
+				reloadData()
+			}else{
+				alert(response.message)
+			}
+		})
+	})
+	//重载数据
+	function reloadData(){
+		var url = baseURL +"/category/findAll";
+		$.get(url,function(response){
+			$(".category_body").empty();
+			var data = response.data
+			data.forEach(function(item){
+				$(` <tr>
+			      <td><input type="checkbox" value="`+item.id+`" name="id" id="cat_id"/></td>
+			      <td>`+item.name+`</td>
+			      <td>`+item.num+`</td>
+			      <td>
+			      	<i class="iconfont icon-shanchu- btn_del mr-3"></i>
+					<i class="iconfont icon-xiugai btn_upt"></i>
+			      </td>
+			    </tr>`).appendTo("tbody")
+			})
+		})
+	}
+	reloadData();
+</script>

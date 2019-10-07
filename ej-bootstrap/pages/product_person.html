@@ -1,0 +1,214 @@
+<style>
+	.customer_but{
+		padding:20px;
+	}
+	.cus_lab{
+		line-height: 35px;
+		height: 35px;
+	}
+	.cus_icon1{
+		position: absolute;
+		top: 30px;
+		left:620px;
+		z-index: 1;
+		cursor: pointer;
+	}
+	.toast{
+		z-index: 4;
+	}
+</style>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-2">
+			<!-- 按钮组 -->
+			<div class="customer_but">
+				<button type="button" class="btn btn-primary mr-3" id="cus_add">添加</button>
+				<button type="button" class="btn btn-danger" id="cus_bat_del">批量删除</button>
+			</div>
+			<!-- 按钮组结束 -->
+		</div>
+		
+	</div>
+</div>
+<!-- 模态框开始 -->
+<div class="modal" tabindex="-1" role="dialog" id="eee">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">添加产品信息</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+		    <input type="hidden" class="form-control" id="cus_modal_id" name="id" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cus_modal_name">产品名</label>
+		    <input type="text" class="form-control" id="cus_modal_name" name="name" placeholder="请输入产品名" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cus_modal_description">描述</label>
+		    <input type="text" class="form-control" id="cus_modal_description" name="description" placeholder="请描述相关信息">
+		  </div>
+		  <div class="form-group">
+		    <label for="cus_modal_price">价格</label>
+		    <input type="text" class="form-control" id="cus_modal_price" name="price" placeholder="请输入价格">
+		  </div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="cus_submit">提交</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 模态框结束 -->
+<!-- 表格开始 -->
+<table class="table customer_table table-striped table-bordered text-center">
+  <thead>
+      <th scope="col">编号</th>
+      <th scope="col">产品名</th>
+      <th scope="col">描述</th>
+      <th scope="col">价格</th>
+      <th scope="col">操作</th>
+    </tr>
+  </thead>
+  <tbody class="customer_body">
+   
+  </tbody>
+</table>
+<!-- 表格结束 -->
+<!-- 提示框开始 -->
+<div class="toast" style="position: absolute;top: 1em;right: 1em">
+  <div class="toast-header">
+    <img src="..." class="rounded mr-2" alt="...">
+    <strong class="mr-auto">提示</strong>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    Hello, world! This is a toast message.
+  </div>
+</div>
+<!-- 提示框结束 -->
+<script>
+	var baseURL = "http://134.175.100.63:6677";
+	//提示框
+	function message(msg){
+		$(".toast .toast-body").text(msg);
+		$(".toast").toast("show")
+	}
+	//添加功能
+	$("#cus_add").on("click",function(){
+		$("#eee").modal("show");
+		$("#cus_modal_name").val("")
+		$("#cus_modal_description").val("") 
+		$("#cus_modal_id").val("")
+		$("#cus_modal_price").val("")
+	})
+	$("#cus_submit").on("click",function(){
+		var url = baseURL+"/product/saveOrUpdate"
+		var data = ""
+		if($("#cus_modal_id").val()){
+			data = "id="+$("#cus_modal_id").val()+"&name="+$("#cus_modal_name").val()+"&description="+$("#cus_modal_description").val()+"&price="+$("#cus_modal_price").val()
+		}else{
+			data = {
+				name:$("#cus_modal_name").val(),
+				description:$("#cus_modal_description").val(),
+				price:$("#cus_modal_price").val()
+			}
+		}
+		console.log(data)
+		$.post(url,data,function(response){
+			if(response.status===200){
+				$("#eee").modal("hide");
+				message("添加成功")
+				reloadData()
+			}else{
+				alert(response.message)
+			}
+		})
+		console.log($("#cus_modal_id").val())
+	})
+	//删除功能
+	$("tbody").on("click",".btn_del",function(){
+		var url = baseURL+"/product/deleteById"
+		data = {
+			id:$(this).parents("tr").children().eq(0).children().eq(0).val(),
+		}
+		$.get(url,data,function(response){
+			if(response.status==200){
+				alert("删除成功")
+				reloadData();
+			}else(
+				alert("删除失败")
+			)
+		})
+	})
+	//批量删除
+	$("#cus_bat_del").on("click",function(){
+		var url = baseURL+"/product/batchDelete";
+		var ids = $("input:checked").map(function(index,item){
+			return $(item).val()
+		}).toArray()
+		console.log(ids)
+		var data = "";
+		for(var key in ids){
+			var id = ids[key]
+			if(key == 0 ){
+				data += "ids="+id;
+			}else{
+				data += "&ids="+id;
+			}
+		}
+		console.log(data)
+		$.post(url,data,function(response){
+			if(response.status == 200 ){
+				alert('删除成功')
+				reloadData()
+			}else{
+				alert(response.message)
+			}
+		})
+	})
+	//修改功能
+	$("tbody").on("click",".btn_upt",function(){
+		$("h5.modal-title").text("修改产品信息")
+		$("#eee").modal("show");
+		$("#cus_modal_name").val($(this).parents("tr").children().eq(1).text())
+		$("#cus_modal_description").val($(this).parents("tr").children().eq(2).text())
+		$("#cus_modal_price").val($(this).parents("tr").children().eq(3).text()) 
+		$("#cus_modal_id").val($(this).parents("tr").children().eq(0).children().eq(0).val())
+	})
+	//模糊查询功能
+	// $(".cus_icon1").on("click",function(){
+	// 	$(location).attr("href","./pages/customer_detail.html")
+	// 	$.cookie("realname","13188886666");
+	// })
+	//重载用户数据
+	function reloadData(){
+		var url = baseURL+"/product/findAll";
+		$.get(url,function(response){
+			$(".customer_body").empty();
+			response.data.forEach(function(item){
+				var newTr = $(` <tr>
+			      <td><input type="checkbox" value="`+item.id+`" name="id" id="cus_id"/></td>
+			      <td>`+item.name+`</td>
+			      <td>`+item.description+`</td>
+			      <td>`+item.price+`</td>
+			      <td>
+			      	<i class="iconfont icon-shanchu- btn_del mr-3"></i>
+					<i class="iconfont icon-xiugai btn_upt"></i>
+			      </td>
+			    </tr>`)
+			    $(".customer_body").append(newTr)
+			})
+		})
+	}
+	reloadData();
+</script>

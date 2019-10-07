@@ -1,0 +1,240 @@
+<style>
+	.customer_but{
+		padding:20px;
+	}
+	.cus_lab{
+		line-height: 35px;
+		height: 35px;
+	}
+	.cus_icon1{
+		position: absolute;
+		top: 30px;
+		left:620px;
+		z-index: 1;
+		cursor: pointer;
+	}
+	.toast{
+		z-index: 4;
+	}
+</style>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-2">
+			<!-- 按钮组 -->
+			<div class="customer_but">
+				<button type="button" class="btn btn-primary mr-3" id="cus_add">添加</button>
+				<button type="button" class="btn btn-danger" id="cus_bat_del">批量删除</button>
+			</div>
+			<!-- 按钮组结束 -->
+		</div>
+		
+	</div>
+</div>
+<!-- 模态框开始 -->
+<div class="modal" tabindex="-1" role="dialog" id="eee">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">填写信息</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+		    <input type="hidden" class="form-control" id="cus_modal_id" name="id" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cus_modal_total">总数</label>
+		    <input type="text" class="form-control" id="cus_modal_total" name="total" placeholder="请输入总数" >
+		  </div>
+		  <div class="form-group">
+		    <label for="cus_modal_waiterId">服务员id</label>
+		    <input type="text" class="form-control" id="cus_modal_waiterId" name="waiterId" placeholder="请输入电话">
+		  </div>
+		   <div class="form-group">
+		    <label for="selector1">顾客id</label>
+		    <!-- <input type="text" class="form-control" id="cus_modal_orderId" name="orderId" placeholder="请输入用户id"> -->
+		     <select id="selector1">
+    			<!-- <option value=”aaa”>bbb</option> -->
+			</select>
+		  </div>
+		  <div class="form-group">
+		    <label for="selector2">地址id</label>
+		    <!-- <input type="text" class="form-control" id="cus_modal_orderId" name="orderId" placeholder="请输入用户id"> -->
+		     <select id="selector2">
+    			<!-- <option value=”aaa”>bbb</option> -->
+			</select>
+		  </div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="cus_submit">提交</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 模态框结束 -->
+<!-- 表格开始 -->
+<table class="table customer_table table-striped table-bordered text-center">
+  <thead>
+      <th scope="col">订单号</th>
+      <th scope="col">订单时间</th>
+      <th scope="col">总数</th>
+      <th scope="col">顾客id</th>
+      <th scope="col">服务员id</th>
+      <th scope="col">地址id</th>
+      <th scope="col">操作</th>
+    </tr>
+  </thead>
+  <tbody class="customer_body">
+   
+  </tbody>
+</table>
+<!-- 表格结束 -->
+<!-- 提示框开始 -->
+<div class="toast" style="position: absolute;top: 1em;right: 1em">
+  <div class="toast-header">
+    <img src="..." class="rounded mr-2" alt="...">
+    <strong class="mr-auto">提示</strong>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    Hello, world! This is a toast message.
+  </div>
+</div>
+<!-- 提示框结束 -->
+<script>
+	var baseURL = "http://134.175.100.63:6677";
+	//提示框
+	function message(msg){
+		$(".toast .toast-body").text(msg);
+		$(".toast").toast("show")
+	}
+	//添加功能
+	$("#cus_add").on("click",function(){
+		$("#eee").modal("show");
+		$("#cus_modal_total").val("")
+		$("#cus_modal_id").val("")
+		$("#cus_modal_waiterId").val("")
+	})
+	$("#cus_submit").on("click",function(){
+		var url = baseURL+"/order/save";
+			data = {
+				total:$("#cus_modal_total").val(),
+				customerId:$("#selector1").val(),
+				addressId:$("#selector2").val(),
+				waiterId:$("#cus_modal_waiterId").val()
+			}
+		console.log(data)
+		$.post(url,data,function(response){
+			if(response.status===200){
+				console.log($("#cus_modal_id").val())
+				$("#eee").modal("hide");
+				message("添加成功")
+				reloadData()
+			}else{
+				alert(response.message)
+			}
+		})
+		console.log($("#cus_modal_id").val())
+	})
+	//下拉框插入数据
+	function inserData1(){
+		var url = baseURL+"/customer/findAll";
+		$.get(url,function(response){
+			response.data.forEach(function(item){
+				var newSecertor = $(`<option value="`+item.id+`">`+item.id+`</option>`)
+				$("#selector1").append(newSecertor)
+			})
+		})
+	}
+	inserData1()
+	function inserData2(){
+		var url = baseURL+"/address/findAll";
+		$.get(url,function(response){
+			response.data.forEach(function(item){
+				var newSecertor = $(`<option value="`+item.id+`">`+item.id+`</option>`)
+				$("#selector2").append(newSecertor)
+			})
+		})
+	}
+	inserData2()
+	//删除功能
+	$("tbody").on("click",".btn_del",function(){
+		var url = baseURL+"/customer/deleteById"
+		data = {
+			id:$(this).parents("tr").children().eq(0).children().eq(0).val(),
+		}
+		$.get(url,data,function(response){
+			if(response.status==200){
+				alert("删除成功")
+				reloadData();
+			}else(
+				alert("删除失败")
+			)
+		})
+	})
+	//批量删除
+	$("#cus_bat_del").on("click",function(){
+		var url = baseURL+"/customer/batchDelete";
+		var ids = $("input:checked").map(function(index,item){
+			return $(item).val()
+		}).toArray()
+		console.log(ids)
+		var data = "";
+		for(var key in ids){
+			var id = ids[key]
+			if(key == 0 ){
+				data += "ids="+id;
+			}else{
+				data += "&ids="+id;
+			}
+		}
+		console.log(data)
+		$.post(url,data,function(response){
+			if(response.status == 200 ){
+				alert('删除成功')
+				reloadData()
+			}else{
+				alert(response.message)
+			}
+		})
+	})
+	//修改功能
+	$("tbody").on("click",".btn_upt",function(){
+		$("#eee").modal("show");
+		$("#cus_modal_name").val($(this).parents("tr").children().eq(2).text())
+		$("#cus_modal_phone").val($(this).parents("tr").children().eq(1).text()) 
+		$("#cus_modal_id").val($(this).parents("tr").children().eq(0).children().eq(0).val())
+	})
+	//模糊查询功能
+	// $(".cus_icon1").on("click",function(){
+	// 	$(location).attr("href","./pages/customer_detail.html")
+	// 	$.cookie("realname","13188886666");
+	// })
+	//重载用户数据
+	function reloadData(){
+		var url = baseURL+"/order/findAll";
+		$.get(url,function(response){
+			$(".customer_body").empty();
+			response.data.forEach(function(item){
+				var newTr = $(` <tr>
+			      <td><input type="checkbox" value="`+item.id+`" name="id" id="cus_id"/>&nbsp`+item.id +`</td>
+			      <td>`+moment(item.orderTime).format("YYYY/MM/DD hh:mm:ss")+`</td>
+			      <td>`+item.total+`</td>
+			      <td>`+item.customerId+`</td>
+			      <td>`+item.waiterId+`</td>
+			      <td>`+item.addressId+`</td>
+			      <td><i class="fa fa-trash btn_del"></i>&nbsp&nbsp<i class="fa fa-pencil-square btn_upt"></i></td>
+			    </tr>`)
+			    $(".customer_body").append(newTr)
+			})
+		})
+	}
+	reloadData();
+</script>

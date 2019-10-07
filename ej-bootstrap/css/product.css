@@ -1,0 +1,244 @@
+html,body {
+	width: 100%;
+	height: 100%;
+	font-size: 12px;
+}
+body {
+	margin: 0;
+}
+.p_base {
+	height: 100%;
+	padding: 0 2em;
+}
+/*顶端面包屑及按钮，height：20%*/
+.p_top {
+	width: 100%;
+	height: 20%;
+	position: relative;
+}
+.p_address {
+	position: absolute;
+	top: 2em;
+}
+.p_address a {
+	text-decoration-line: none;
+	color: #3c3c3c;
+	font-size: 1.2em;
+}
+.p_address > span:first-child > a {
+	font-size: 1.5em;
+}
+.ptn_base {
+	position: absolute;
+	width: 100%;
+	bottom: 2em;
+}
+.ptn_base::after {
+	content: "";
+	display: block;
+	clear: both;
+}
+.p_btns {
+	float: left;
+}
+.p_btns > div {
+	display: inline-block;
+	text-align: center;
+	line-height: 2em;
+	font-size: 1.2em;
+	cursor: pointer;
+	margin: 0.5em 0 0;
+	padding: 0.5em 1em;
+	border: 1px solid teal;
+	border-radius: 5px;
+}
+.p_btns > div:hover {
+	box-shadow: 0 0 5px teal;
+}
+.p_search {
+	float: right;
+	border: 1px solid teal;
+	border-radius: 5px;
+	padding: 0.5em 1em;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.p_search:hover {
+	border-color: lightblue;
+	transition: border-color;
+	transition-duration: 0.5s;
+}
+.p_search > span > input {
+	border: none;
+}
+.p_search > span > input:focus {
+	outline: none;
+}
+.p_search > .search {
+	display: inline-block;
+	cursor: pointer;
+}
+.p_search > .search > i {
+	font-size: 1.5em;
+}
+/*顶端面包屑及按钮操作结束*/
+/*内容区，height：70%*/
+.p_cont {
+	height: 70%;
+	width: 100%;
+	border: 1px solid teal;
+	border-radius: 5px;
+	padding: 0 2px;
+}
+.p_table {
+	width: 100%;
+	border: 1px solid teal;
+	border-collapse: collapse;
+	text-align: center;
+	line-height: 3em;
+}
+.p_table td {
+	border: 1px solid teal;
+}
+.p_head {
+	background-color: #ededed;
+}
+.ptr_base {
+	display: none;
+}
+.pbd_cont > tr > td:last-child {
+	width: 20%;
+}
+.pbd_cont > tr > td:last-child > span {
+	display: inline-block;
+	width: 3em;
+	text-align: center;
+	color: #1890ff;
+	cursor: pointer;
+}
+/*内容区结束*/
+/*底端分页*/
+.p_bottom {
+	height: 10%;
+	width: 100%;
+	position: relative;
+}
+.pbom_base {
+	position: absolute;
+	top: 0.5em;
+	right: 0.5em;
+}
+.pbom_base > span:nth-child(2) {
+	display: inline-block;
+	width: 2em;
+	line-height: 2em;
+	text-align: center;
+	border: 1px solid lightblue;
+	border-radius: 5px;
+}
+/*底端分页结束*/
+/*模态框*/
+.pmtk_base {
+	display: none;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: rgba(3,3,3,0.4);
+}
+.pmtk_cont {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	background-color: #fff;
+	width: 40%;
+	height: 70%;
+	border-radius: 5px;
+}
+.pmtk_cont > ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.pmtk_cont > ul > li:nth-child(1) {
+	height: 15%;
+	box-sizing: border-box;
+	border-bottom: 1px solid #ededed;
+}
+.pmtk_top > div:first-child {
+	float: left;
+	font-size: 1.5em;
+	margin-left: 1em;
+	margin-top: 1.2em;
+}
+.pmtk_top > div:last-child {
+	float: right;
+	margin-top: 1.2em;
+	margin-right: 1em;
+	font-size: 1.5em;
+	cursor: pointer;
+}
+.pmtk_cont > ul > li:nth-child(2) {
+	height: 70%;
+	box-sizing: border-box;
+	padding: 2em 2em;
+}
+.pmtk_form > div > span:nth-child(1) {
+	color: red;
+	font-size: 1.5em;
+}
+.pmtk_form > div > span:nth-child(2) {
+	font-size: 1.2em;
+}
+.pmtk_form > div > span:nth-child(3) {
+	display: inline-block;
+	box-sizing: border-box;
+	border: 1px solid teal;
+	border-radius: 5px;
+	width: 60%;
+	margin: 1em 2em;
+	padding: 0.5em 1em;
+	height: 3em;
+}
+.pmtk_form > div > span:nth-child(3) > input {
+	width: 100%;
+	border: none;
+}
+.pmtk_form > div > span:nth-child(3) > input:focus {
+	outline: none;
+}
+.pmtk_cont > ul > li:nth-child(3) {
+	height: 15%;
+	border-top: 1px solid #ededed;
+	padding: 1em 1em;
+}
+.pmtk_btns {
+	float: right;
+}
+.pmtk_no {
+	display: inline-block;
+	width: 3em;
+	font-size: 1.5em;
+	text-align: center;
+	line-height: 2em;
+	border-radius: 5px;
+	border: 1px solid #ededed;
+	margin: 0 1em;
+	cursor: pointer;
+}
+.pmtk_yes {
+	display: inline-block;
+	width: 3em;
+	font-size: 1.5em;
+	text-align: center;
+	line-height: 2em;
+	background-color: #1890ff;
+	border-radius: 5px;
+	cursor: pointer;
+}
+/*模态框结束*/
